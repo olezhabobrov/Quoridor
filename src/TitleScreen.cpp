@@ -1,11 +1,15 @@
 #include "TitleScreen.h"
 #include "ui_TitleScreen.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+
+TitleScreen::TitleScreen(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::TitleScreen)
 {
-    button = new QPushButton(this);
-    button->setText("Hello");
+    ui->setupUi(this);
 }
 
+void TitleScreen::on_Button2Players_clicked()
+{
+    this->hide();
+}
 
