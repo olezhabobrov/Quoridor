@@ -23,11 +23,13 @@ add_compile_options(-lstdc++)
 add_executable(Quoridor
         include/TitleScreen.h
         include/GameField.h
+        include/Controller.h
         src/main.cpp
         src/TitleScreen.cpp
         src/TitleScreen.ui
         src/GameField.cpp
         src/GameField.ui
+        src/Controller.cpp
 )
 
 target_link_libraries(Quoridor Qt5::Widgets)

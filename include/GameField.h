@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QMainWindow>
+#include <QDialog>
 #include <memory>
 
 QT_BEGIN_NAMESPACE
@@ -10,7 +10,7 @@ class GameField;
 QT_END_NAMESPACE
 
 
-class GameField : public QMainWindow
+class GameField : public QDialog
 {
     Q_OBJECT
 
@@ -18,6 +18,8 @@ class GameField : public QMainWindow
 
 public:
     explicit GameField(QWidget *parent = nullptr);
+
+    ~GameField();
 
 signals:
 

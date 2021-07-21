@@ -1,6 +1,8 @@
-#include "controller.h"
+#include "Controller.h"
 
-Controller::Controller(QObject *parent) : QObject(parent)
+Controller::Controller(QObject *parent) : QObject(parent), field()
 {
+    field.showFullScreen();
+    field.exec();
 
 }
