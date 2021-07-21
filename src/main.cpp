@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "TitleScreen.h"
 
 #include <QApplication>
 #include <QPushButton>
