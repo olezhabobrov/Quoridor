@@ -1,7 +1,8 @@
 #pragma once
 
 #include <QDialog>
-#include <memory>
+#include <vector>
+#include "Types.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,12 +19,13 @@ class GameField : public QDialog
 
 public:
     explicit GameField(QWidget *parent = nullptr);
+    std::vector<Cell> setField();
 
     ~GameField();
 
 private:
     void setConnections();
-    void setField();
+
 
 signals:
 

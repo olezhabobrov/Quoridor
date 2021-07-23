@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>724</width>
-    <height>585</height>
+    <height>593</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -48,10 +48,10 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>50</y>
-     <width>461</width>
-     <height>391</height>
+     <x>10</x>
+     <y>10</y>
+     <width>491</width>
+     <height>471</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="Board"/>
@@ -59,8 +59,8 @@
   <widget class="QPushButton" name="placeFence">
    <property name="geometry">
     <rect>
-     <x>540</x>
-     <y>290</y>
+     <x>590</x>
+     <y>240</y>
      <width>131</width>
      <height>28</height>
     </rect>

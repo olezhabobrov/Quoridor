@@ -21,6 +21,7 @@ add_compile_options(-lstdc++)
 
 
 add_executable(Quoridor
+        include/Types.h
         include/TitleScreen.h
         include/GameField.h
         include/Controller.h
