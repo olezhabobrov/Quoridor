@@ -2,7 +2,7 @@
 
 Controller::Controller(QObject *parent) : QObject(parent), field()
 {
-    field.showFullScreen();
+    field.show();
     field.exec();
 
 }

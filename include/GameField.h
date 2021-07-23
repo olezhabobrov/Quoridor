@@ -21,6 +21,12 @@ public:
 
     ~GameField();
 
+private:
+    void setConnections();
+    void setField();
+
 signals:
 
+private slots:
+    void placeFence();
 };
