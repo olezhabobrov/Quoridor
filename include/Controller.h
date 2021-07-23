@@ -10,7 +10,7 @@ class Controller : public QObject
 Q_OBJECT
 
     GameField field;
-    std::vector<Cell> cells;
+    Board board;
 
 public:
     explicit Controller(QObject *parent = nullptr);

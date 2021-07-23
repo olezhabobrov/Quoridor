@@ -1,7 +1,7 @@
 #include "Controller.h"
 #include <iostream>
 
-Controller::Controller(QObject *parent) : QObject(parent), field(), cells(field.setField())
+Controller::Controller(QObject *parent) : QObject(parent), field(), board(field.setField())
 {
     setConnections();
 
@@ -10,10 +10,12 @@ Controller::Controller(QObject *parent) : QObject(parent), field(), cells(field.
 }
 
 void Controller::setConnections() {
-    for (Cell& cell: cells) {
-        connect(cell.button, &QPushButton::clicked, [&](){
-            cellClicked(cell);
-        });
+    for (auto& cellRow: board.cells) {
+        for (auto& cell : cellRow){
+            connect(cell.button, &QPushButton::clicked, [&](){
+                cellClicked(cell);
+            });
+        }
     }
 }
 

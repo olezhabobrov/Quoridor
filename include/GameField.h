@@ -19,7 +19,7 @@ class GameField : public QDialog
 
 public:
     explicit GameField(QWidget *parent = nullptr);
-    std::vector<Cell> setField();
+    Board setField();
 
     ~GameField();
 

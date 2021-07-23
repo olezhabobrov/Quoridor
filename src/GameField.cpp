@@ -1,3 +1,4 @@
+#include <cassert>
 #include "GameField.h"
 #include "ui_GameField.h"
 
@@ -16,42 +17,53 @@ void GameField::setConnections() {
     connect(ui->menu, &QPushButton::clicked, [=] { close(); });
 }
 
-std::vector<Cell> GameField::setField() {
-    std::vector<Cell> cells;
+Board GameField::setField() {
+    Board board;
+    std::vector<Cell> cellsRow;
     ui->Board->setHorizontalSpacing(0);
     ui->Board->setVerticalSpacing(0);
     for (int h = 0; h < 17; h++) {
         for (int w = 0; w < 17; w++) {
             QPushButton *button = new QPushButton();
-            int x = 0;
-            int y = 0;
-            if (h % 2 && w % 2) {;
-//                button->setStyleSheet("background-color: red");
+
+            // board cell
+            if (h % 2 == 0 && w % 2 == 0) {
+                assert(h / 2 < 9 && w / 2 < 9);
+                button->setFixedSize(40, 40);
+                board.cells[h / 2][w / 2] = Cell(button, w / 2, h / 2);
+            }
+
+            // verical fence
+            if (h % 2 == 0 && w % 2 == 1) {
+                assert(h / 2 < 9 && w / 2 < 8);
+                button->setFixedSize(15, 40);
+                board.verticalFences[h / 2][w / 2] = Fence(button, Orientation::VERTICAL, w / 2, h / 2);
+            }
+
+            // horizontal fence
+            if (h % 2 == 1 && w % 2 == 0) {
+                assert(h / 2 < 8 && w / 2 < 9);
+                button->setFixedSize(40, 15);
+                board.horizontalFences[h / 2][w / 2] = Fence(button, Orientation::HORIZONTAL, w / 2, h / 2);
+            }
+
+            // between fence
+            if (h % 2 == 1 && w % 2 == 1) {
+                assert(h / 2 < 8 && w / 2 < 8);
+                button->setFixedSize(15, 15);
                 button->setVisible(false);
+                board.betweenDots[h / 2][w / 2] = Fence(button, Orientation::NONE, w / 2, h / 2);
+                //                button->setStyleSheet("background-color: red");
             }
-            if (h % 2 == 0) {
-                y = 40;
-            } else {
-                y = 15;
-            }
-            if (w % 2 == 0) {
-                x = 40;
-            } else {
-                x = 15;
-            }
-            if (h == 0 && w == 8) {
-                button->setText("O");
-            }
-            if (h == 16 && w == 8) {
-                button->setText("X");
-            }
-            button->setFixedSize(x, y);
+
 
             ui->Board->addWidget(button, h, w);
-            cells.emplace_back(button, w, h);
         }
     }
-    return cells;
+    board.cells[0][4].button->setText("X");
+    board.cells[8][4].button->setText("O");
+
+    return board;
 }
 
 
