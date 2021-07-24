@@ -25,6 +25,8 @@ Board GameField::setField() {
     for (int h = 0; h < 17; h++) {
         for (int w = 0; w < 17; w++) {
             QPushButton *button = new QPushButton();
+            button->setStyleSheet("background-color: lightgrey");
+
 
             // board cell
             if (h % 2 == 0 && w % 2 == 0) {

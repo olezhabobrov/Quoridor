@@ -2,15 +2,56 @@
 
 #include <QPushButton>
 #include <vector>
+#include <algorithm>
+#include <unordered_map>
+#include <utility>
 
 using std::vector;
+
+
+struct Direction {
+    int x = 0;
+    int y = 0;
+
+    Direction(int x, int y) : x(x), y(y){};
+};
 
 struct Cell {
     QPushButton *button = nullptr;
     int x = -1;
     int y = -1;
+    bool available = false;
 
-    Cell(QPushButton *b, int x, int y) : button(b), x(x), y(y){};
+    vector<Direction> directions = {{-1, 0}, {0, 1}, {0, -1}, {1, 0}};
+
+    Cell(QPushButton *b, int x, int y) : button(b), x(x), y(y){
+        if (x == 0) {
+            deleteDirection(Direction(-1, 0));
+        }
+        if (x == 8) {
+            deleteDirection(Direction(1, 0));
+        }
+        if (y == 0) {
+            deleteDirection(Direction(0, -1));
+        }
+        if (y == 8) {
+            deleteDirection(Direction(0, 1));
+        }
+    };
+
+    void deleteDirection(Direction direct) {
+        for (std::size_t i = 0; i < directions.size(); ++i) {
+            if (direct.x == directions[i].x && direct.y == directions[i].y) {
+                directions.erase(directions.begin() + i);
+                break;
+            }
+        }
+    }
+
+    void setAvailable() {
+        available = true;
+        button->setStyleSheet("background-color: green");
+    }
 
     Cell() = default;
 };
@@ -26,6 +67,7 @@ struct Fence {
     Orientation orient = Orientation::NONE;
     int x = -1;
     int y = -1;
+    bool available = true;
 
     Fence(QPushButton *b, Orientation o, int x, int y) : button(b), orient(o), x(x), y(y){};
 
