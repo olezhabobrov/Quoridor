@@ -39,18 +39,30 @@ struct Cell {
         }
     };
 
-    void deleteDirection(Direction direct) {
+    int findDirection(Direction direct) {
         for (std::size_t i = 0; i < directions.size(); ++i) {
             if (direct.x == directions[i].x && direct.y == directions[i].y) {
-                directions.erase(directions.begin() + i);
-                break;
+                return i;
             }
+        }
+        return -1;
+    }
+
+    void deleteDirection(Direction direct) {
+        int pos = findDirection(direct);
+        if (pos != -1) {
+            directions.erase(directions.begin() + pos);
         }
     }
 
     void setAvailable() {
         available = true;
         button->setStyleSheet("background-color: green");
+    }
+
+    void setUnavailable() {
+        available = false;
+        button->setStyleSheet("background-color: lightgrey");
     }
 
     Cell() = default;

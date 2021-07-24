@@ -20,6 +20,7 @@ Q_OBJECT
     Board board;
     bool currentPlayer = 0;
     vector<Player> players;
+    std::vector<Cell> highlightedCells;
 
 public:
     explicit Controller(QObject *parent = nullptr);
@@ -30,6 +31,9 @@ private:
     void setGame();
     void cellClicked(Cell&);
     void prepareMove();
+    void clearMove();
+    void nextMove();
+    void setAvailable(Cell &);
 
 signals:
 

@@ -21,7 +21,18 @@ void Controller::setConnections() {
 }
 
 void Controller::cellClicked(Cell &cell) {
-    std::cout << "x=" << cell.x << "    y=" << cell.y << std::endl;
+    if (cell.available) {
+        players[currentPlayer].currentPosition.button->setText("");
+        clearMove();
+        players[currentPlayer].currentPosition = cell;
+        cell.button->setText((!currentPlayer ? "O" : "X"));
+        nextMove();
+    }
+}
+
+void Controller::nextMove() {
+    currentPlayer ^= 1;
+    prepareMove();
 }
 
 void Controller::setGame() {
@@ -31,9 +42,43 @@ void Controller::setGame() {
     prepareMove();
 }
 
+namespace {
+bool sameCells(const Cell &first, const Cell &second) {
+    return first.x == second.x && first.y == second.y;
+}
+}
+
 void Controller::prepareMove() {
     Cell &cell = players[currentPlayer].currentPosition;
     for (auto dir : cell.directions) {
-        board.cells[cell.y + dir.y][cell.x + dir.x].setAvailable();
+        Cell &cellTemp = board.cells[cell.y + dir.y][cell.x + dir.x];
+        if (sameCells(players[currentPlayer ^ 1].currentPosition, cellTemp)){
+            if (cellTemp.findDirection(dir) != -1) {
+                setAvailable(board.cells[cellTemp.y + dir.y][cellTemp.x + dir.x]);
+            } else {
+                for (auto dirT : cellTemp.directions) {
+                    if (!sameCells(board.cells[cellTemp.y + dirT.y][cellTemp.x + dirT.x], cell)) {
+                        setAvailable(board.cells[cellTemp.y + dirT.y][cellTemp.x + dirT.x]);
+                    }
+                }
+            }
+        } else{
+            setAvailable(cellTemp);
+        }
     }
 }
+
+void Controller::clearMove() {
+    Cell &cell = players[currentPlayer].currentPosition;
+    for (Cell &cell : highlightedCells) {
+        cell.setUnavailable();
+    }
+    highlightedCells.clear();
+}
+
+void Controller::setAvailable(Cell &cell) {
+    highlightedCells.push_back(cell);
+    cell.setAvailable();
+}
+
+
