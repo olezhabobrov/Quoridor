@@ -79,7 +79,14 @@ struct Fence {
     Orientation orient = Orientation::NONE;
     int x = -1;
     int y = -1;
-    bool available = true;
+    bool available = false;
+    bool marked = false;
+
+    void setMarked() {
+        marked = true;
+        button->setVisible(true);
+        button->setStyleSheet("background-color: blue");
+    }
 
     Fence(QPushButton *b, Orientation o, int x, int y) : button(b), orient(o), x(x), y(y){};
 

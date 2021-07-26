@@ -17,9 +17,6 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 include_directories(include)
 #include_directories(Forms)
 
-add_compile_options(-lstdc++)
-
-
 add_executable(Quoridor
         include/Types.h
         include/TitleScreen.h
