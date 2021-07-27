@@ -56,18 +56,31 @@
    </property>
    <layout class="QGridLayout" name="Board"/>
   </widget>
-  <widget class="QPushButton" name="placeFence">
+  <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>590</x>
-     <y>240</y>
-     <width>131</width>
-     <height>28</height>
+     <x>520</x>
+     <y>10</y>
+     <width>191</width>
+     <height>461</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Place the fence</string>
-   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGroupBox" name="PlayerXBox">
+      <property name="title">
+       <string>Player X</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Player O</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

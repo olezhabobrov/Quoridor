@@ -7,9 +7,9 @@
 
 struct Player {
     bool id = 0;
-    Cell currentPosition;
+    Cell *currentPosition;
 
-    Player(bool id, const Cell &c) : id(id), currentPosition(c) {};
+    Player(bool id, Cell *c) : id(id), currentPosition(c) {};
 };
 
 class Controller : public QObject
@@ -42,6 +42,7 @@ private:
     void unmarkFences();
     void unmarkCells();
     void setFence(Fence &, Fence &);
+    void deleteMoves(Fence &);
 
 signals:
 

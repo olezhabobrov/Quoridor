@@ -39,9 +39,9 @@ void Controller::setConnections() {
 
 void Controller::cellClicked(Cell &cell) {
     if (cell.available) {
-        players[currentPlayer].currentPosition.button->setText("");
+        players[currentPlayer].currentPosition->button->setText("");
         clearMove();
-        players[currentPlayer].currentPosition = cell;
+        players[currentPlayer].currentPosition = &cell;
         cell.button->setText((!currentPlayer ? "O" : "X"));
         nextMove();
     }
@@ -103,8 +103,8 @@ void Controller::nextMove() {
 
 void Controller::setGame() {
     players.clear();
-    players.emplace_back(0, board.cells[8][4]);
-    players.emplace_back(1, board.cells[0][4]);
+    players.emplace_back(0, &board.cells[8][4]);
+    players.emplace_back(1, &board.cells[0][4]);
     prepareMove();
 }
 
@@ -121,15 +121,15 @@ void printCell(Cell &cell) {
 }
 
 void Controller::prepareMove() {
-    Cell &cell = players[currentPlayer].currentPosition;
-    for (auto dir : cell.directions) {
-        Cell &cellTemp = board.cells[cell.y + dir.y][cell.x + dir.x];
-        if (sameCells(players[currentPlayer ^ 1].currentPosition, cellTemp)){
+    Cell *cell = players[currentPlayer].currentPosition;
+    for (auto dir : cell->directions) {
+        Cell &cellTemp = board.cells[cell->y + dir.y][cell->x + dir.x];
+        if (sameCells(*players[currentPlayer ^ 1].currentPosition, cellTemp)){
             if (cellTemp.findDirection(dir) != -1) {
                 setAvailable(board.cells[cellTemp.y + dir.y][cellTemp.x + dir.x]);
             } else {
                 for (auto dirT : cellTemp.directions) {
-                    if (!sameCells(board.cells[cellTemp.y + dirT.y][cellTemp.x + dirT.x], cell)) {
+                    if (!sameCells(board.cells[cellTemp.y + dirT.y][cellTemp.x + dirT.x], *cell)) {
                         setAvailable(board.cells[cellTemp.y + dirT.y][cellTemp.x + dirT.x]);
                     }
                 }
@@ -160,7 +160,7 @@ void Controller::setAvailable(Fence &fence) {
 }
 
 void Controller::unmarkCells() {
-    Cell &cell = players[currentPlayer].currentPosition;
+    Cell *cell = players[currentPlayer].currentPosition;
     for (Cell *cell : highlightedCells) {
         cell->setUnavailable();
     }
@@ -181,7 +181,20 @@ void Controller::unmarkFences() {
 
 void Controller::setFence(Fence &first, Fence &second) {
     first.setMarked();
+    deleteMoves(first);
     second.setMarked();
+    deleteMoves(second);
     board.betweenDots[(first.y + second.y) / 2][(first.x + second.x) / 2].setMarked();
 }
 
+void Controller::deleteMoves(Fence &fence) {
+    if (fence.orient == Orientation::HORIZONTAL) {
+        board.cells[fence.y][fence.x].deleteDirection(Direction(0, 1));
+        board.cells[fence.y + 1][fence.x].deleteDirection(Direction(0, -1));
+    }
+    if (fence.orient == Orientation::VERTICAL) {
+        board.cells[fence.y][fence.x].deleteDirection(Direction(1, 0));
+        board.cells[fence.y][fence.x + 1].deleteDirection(Direction(-1, 0));
+    }
+
+}
