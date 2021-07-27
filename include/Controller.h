@@ -7,6 +7,7 @@
 
 struct Player {
     bool id = 0;
+    int fenceCount = 10;
     Cell *currentPosition;
 
     Player(bool id, Cell *c) : id(id), currentPosition(c) {};
@@ -43,6 +44,7 @@ private:
     void unmarkCells();
     void setFence(Fence &, Fence &);
     void deleteMoves(Fence &);
+    void changePlayer();
 
 signals:
 

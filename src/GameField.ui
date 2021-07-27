@@ -71,13 +71,57 @@
       <property name="title">
        <string>Player X</string>
       </property>
+      <widget class="QWidget" name="verticalLayoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>60</y>
+         <width>171</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="fenceLabelX">
+          <property name="text">
+           <string>Fences left:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLCDNumber" name="fenceCounterX"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="groupBox_2">
+     <widget class="QGroupBox" name="PlayerOBox">
       <property name="title">
        <string>Player O</string>
       </property>
+      <widget class="QWidget" name="verticalLayoutWidget_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>171</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="fenceLabelO">
+          <property name="text">
+           <string>Fences left:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLCDNumber" name="fenceCounterO"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>

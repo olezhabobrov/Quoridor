@@ -19,13 +19,16 @@ class GameField : public QDialog
 
 public:
     explicit GameField(QWidget *parent = nullptr);
+
+    void setPlayerMove(bool);
+    void setGame();
+    void updateFenceCounter(bool, int);
     Board setField();
 
     ~GameField();
 
 private:
     void setConnections();
-
 
 signals:
 

@@ -59,7 +59,7 @@ void Controller::fenceClicked(Fence &fence) {
             Fence &initialFence = *markedFence;
             unmarkFences();
             setFence(initialFence, fence);
-            currentPlayer ^= 1;
+            changePlayer();
             clearMove();
             prepareMove();
         }
@@ -97,7 +97,7 @@ void Controller::markFence(Fence &fence) {
 }
 
 void Controller::nextMove() {
-    currentPlayer ^= 1;
+    changePlayer();
     prepareMove();
 }
 
@@ -105,6 +105,7 @@ void Controller::setGame() {
     players.clear();
     players.emplace_back(0, &board.cells[8][4]);
     players.emplace_back(1, &board.cells[0][4]);
+    field.setGame();
     prepareMove();
 }
 
@@ -180,11 +181,13 @@ void Controller::unmarkFences() {
 }
 
 void Controller::setFence(Fence &first, Fence &second) {
+
     first.setMarked();
     deleteMoves(first);
     second.setMarked();
     deleteMoves(second);
     board.betweenDots[(first.y + second.y) / 2][(first.x + second.x) / 2].setMarked();
+    field.updateFenceCounter(currentPlayer, --players[currentPlayer].fenceCount);
 }
 
 void Controller::deleteMoves(Fence &fence) {
@@ -197,4 +200,9 @@ void Controller::deleteMoves(Fence &fence) {
         board.cells[fence.y][fence.x + 1].deleteDirection(Direction(-1, 0));
     }
 
+}
+
+void Controller::changePlayer() {
+    currentPlayer ^= 1;
+    field.setPlayerMove(currentPlayer);
 }
