@@ -119,7 +119,6 @@ Board GameField::setField() {
                 button->setFixedSize(15, 15);
                 button->setVisible(false);
                 board.betweenDots[h / 2][w / 2] = Fence(button, Orientation::NONE, w / 2, h / 2);
-                //                button->setStyleSheet("background-color: red");
             }
 
 
@@ -127,8 +126,9 @@ Board GameField::setField() {
         }
     }
     board.cells[0][4].button->setText("X");
+    board.cells[0][4].setPlayerMark(true);
     board.cells[8][4].button->setText("O");
-
+    board.cells[8][4].setPlayerMark(false);
     return board;
 }
 

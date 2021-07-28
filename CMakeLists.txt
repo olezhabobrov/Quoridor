@@ -23,6 +23,7 @@ add_executable(Quoridor
         include/GameField.h
         include/Controller.h
         include/PathFinder.h
+        include/VictoryScreen.h
         src/main.cpp
         src/TitleScreen.cpp
         src/TitleScreen.ui
@@ -30,6 +31,8 @@ add_executable(Quoridor
         src/GameField.ui
         src/Controller.cpp
         src/PathFinder.cpp
+        src/VictoryScreen.ui
+        src/VictoryScreen.cpp
 )
 
 target_link_libraries(Quoridor Qt5::Widgets)

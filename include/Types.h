@@ -65,6 +65,21 @@ struct Cell {
         button->setStyleSheet("background-color: lightgrey");
     }
 
+    void setPlayerMark(bool player) {
+        if (player) {
+            button->setStyleSheet("font-size: 25px;"
+                                  "font: bold;"
+                                  "background-color: lightgrey");
+            button->setText("X");
+        } else {
+            button->setStyleSheet("color: red;"
+                                  "font-size: 25px;"
+                                  "font: bold;"
+                                  "background-color: lightgrey");
+            button->setText("O");
+        }
+    }
+
     Cell() = default;
 };
 

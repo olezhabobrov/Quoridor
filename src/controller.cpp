@@ -1,5 +1,6 @@
 #include "Controller.h"
 #include "PathFinder.h"
+#include "VictoryScreen.h"
 #include <iostream>
 #include <queue>
 
@@ -44,32 +45,34 @@ void Controller::cellClicked(Cell &cell) {
         players[currentPlayer].currentPosition->button->setText("");
         clearMove();
         players[currentPlayer].currentPosition = &cell;
-        cell.button->setText((!currentPlayer ? "O" : "X"));
+        cell.setPlayerMark(currentPlayer);
         nextMove();
     }
 }
 
 void Controller::fenceClicked(Fence &fence) {
-// if we place second fence
-    if (markedFence) {
-        if (&fence == markedFence) {
-            unmarkFences();
-            return;
-        }
+    if (players[currentPlayer].fenceCount > 0){
+        // if we place second fence
+        if (markedFence) {
+            if (&fence == markedFence) {
+                unmarkFences();
+                return;
+            }
 
-        if (fence.available) {
-            Fence &initialFence = *markedFence;
-            unmarkFences();
-            setFence(initialFence, fence);
-            changePlayer();
-            clearMove();
-            prepareMove();
+            if (fence.available) {
+                Fence &initialFence = *markedFence;
+                unmarkFences();
+                setFence(initialFence, fence);
+                changePlayer();
+                clearMove();
+                prepareMove();
+            }
         }
-    }
-// if we place first fence
-    else {
-        if (!fence.marked) {
-            markFence(fence);
+        // if we place first fence
+        else {
+            if (!fence.marked) {
+                markFence(fence);
+            }
         }
     }
 
@@ -128,6 +131,11 @@ void printCell(Cell &cell) {
 }
 
 void Controller::prepareMove() {
+    if (players[0].currentPosition->y == 0 || players[1].currentPosition->y == 8) {
+        VictoryScreen victory(&field, (players[0].currentPosition->y == 0 ? false : true));
+        victory.exec();
+        field.close();
+    }
     Cell *cell = players[currentPlayer].currentPosition;
     for (auto dir : cell->directions) {
         Cell &cellTemp = board.cells[cell->y + dir.y][cell->x + dir.x];
