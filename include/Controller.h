@@ -21,11 +21,11 @@ Q_OBJECT
     Board board;
     bool currentPlayer = 0;
     vector<Player> players;
-    std::vector<Cell*> highlightedCells;
-    std::vector<Fence*> highlightedFences;
+    vector<Cell*> highlightedCells;
+    vector<Fence*> highlightedFences;
     Fence* markedFence = nullptr;
 
-    std::vector<std::vector<int>> distances;
+    vector<vector<int>> distances;
 
 public:
     explicit Controller(QObject *parent = nullptr);
@@ -45,10 +45,9 @@ private:
     void unmarkFences();
     void unmarkCells();
     void setFence(Fence &, Fence &);
-    void deleteMoves(Fence &);
+    void deleteMoves(const Fence &, vector<vector<Cell>>&);
     void changePlayer();
-    void bfs(const Cell &);
-    bool pathsExist();
+    bool checkFence(const Fence &, const Fence &);
 
 
 signals:

@@ -22,12 +22,14 @@ add_executable(Quoridor
         include/TitleScreen.h
         include/GameField.h
         include/Controller.h
+        include/PathFinder.h
         src/main.cpp
         src/TitleScreen.cpp
         src/TitleScreen.ui
         src/GameField.cpp
         src/GameField.ui
         src/Controller.cpp
+        src/PathFinder.cpp
 )
 
 target_link_libraries(Quoridor Qt5::Widgets)

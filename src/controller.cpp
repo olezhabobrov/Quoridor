@@ -1,4 +1,5 @@
 #include "Controller.h"
+#include "PathFinder.h"
 #include <iostream>
 #include <queue>
 
@@ -78,20 +79,24 @@ void Controller::markFence(Fence &fence) {
     markedFence = &fence;
     fence.button->setStyleSheet("background-color: green");
     if (fence.orient == Orientation::HORIZONTAL) {
-        if (fence.x > 0 && !board.betweenDots[fence.y][fence.x - 1].marked) {
+        if (fence.x > 0 && !board.betweenDots[fence.y][fence.x - 1].marked &&
+                checkFence(fence, board.horizontalFences[fence.y][fence.x - 1])) {
             setAvailable(board.horizontalFences[fence.y][fence.x - 1]);
         }
         if (fence.x < board.horizontalFences[fence.y].size() - 1 &&
-                !board.betweenDots[fence.y][fence.x].marked) {
+                !board.betweenDots[fence.y][fence.x].marked &&
+                checkFence(fence, board.horizontalFences[fence.y][fence.x + 1])) {
             setAvailable(board.horizontalFences[fence.y][fence.x + 1]);
         }
     }
     if (fence.orient == Orientation::VERTICAL) {
-        if (fence.y > 0 && !board.betweenDots[fence.y - 1][fence.x].marked) {
+        if (fence.y > 0 && !board.betweenDots[fence.y - 1][fence.x].marked &&
+                checkFence(fence, board.verticalFences[fence.y - 1][fence.x])) {
             setAvailable(board.verticalFences[fence.y - 1][fence.x]);
         }
         if (fence.y < board.verticalFences.size() - 1 &&
-                !board.betweenDots[fence.y][fence.x].marked) {
+                !board.betweenDots[fence.y][fence.x].marked &&
+                checkFence(board.verticalFences[fence.y + 1][fence.x], fence)) {
             setAvailable(board.verticalFences[fence.y + 1][fence.x]);
         }
     }
@@ -184,21 +189,21 @@ void Controller::unmarkFences() {
 void Controller::setFence(Fence &first, Fence &second) {
 
     first.setMarked();
-    deleteMoves(first);
+    deleteMoves(first, board.cells);
     second.setMarked();
-    deleteMoves(second);
+    deleteMoves(second, board.cells);
     board.betweenDots[(first.y + second.y) / 2][(first.x + second.x) / 2].setMarked();
     field.updateFenceCounter(currentPlayer, --players[currentPlayer].fenceCount);
 }
 
-void Controller::deleteMoves(Fence &fence) {
+void Controller::deleteMoves(const Fence &fence, vector<vector<Cell>> &cells) {
     if (fence.orient == Orientation::HORIZONTAL) {
-        board.cells[fence.y][fence.x].deleteDirection(Direction(0, 1));
-        board.cells[fence.y + 1][fence.x].deleteDirection(Direction(0, -1));
+        cells[fence.y][fence.x].deleteDirection(Direction(0, 1));
+        cells[fence.y + 1][fence.x].deleteDirection(Direction(0, -1));
     }
     if (fence.orient == Orientation::VERTICAL) {
-        board.cells[fence.y][fence.x].deleteDirection(Direction(1, 0));
-        board.cells[fence.y][fence.x + 1].deleteDirection(Direction(-1, 0));
+        cells[fence.y][fence.x].deleteDirection(Direction(1, 0));
+        cells[fence.y][fence.x + 1].deleteDirection(Direction(-1, 0));
     }
 
 }
@@ -208,42 +213,10 @@ void Controller::changePlayer() {
     field.setPlayerMove(currentPlayer);
 }
 
-void Controller::bfs(const Cell &cell) {
-    distances.assign(9, std::vector<int>(9, INT_MAX));
-
-    std::queue<Cell> q;
-    q.push(cell);
-    distances[cell.y][cell.x] = 0;
-    while(!q.empty()) {
-        Cell c = q.front();
-        q.pop();
-        for (auto dir : c.directions) {
-            if (distances[c.y + dir.y][c.x + dir.x] != INT_MAX) {
-                distances[c.y + dir.y][c.x + dir.x] = distances[c.y][c.x] + 1;
-                q.push(board.cells[c.y + dir.y][c.x + dir.x]);
-            }
-        }
-    }
+bool Controller::checkFence(const Fence& first, const Fence &second) {
+    PathFinder pFinder(board.cells);
+    deleteMoves(first, pFinder.getField());
+    deleteMoves(second, pFinder.getField());
+    return pFinder.pathsExist(*players[0].currentPosition, *players[1].currentPosition);
 }
 
-bool Controller::pathsExist() {
-    bfs(*players[0].currentPosition);
-    for (int i = 0; i < 10; ++i) {
-        if (i == 9) {
-            return false;
-        }
-        if (distances[0][i] != INT_MAX) {
-            break;
-        }
-    }
-    bfs(*players[1].currentPosition);
-    for (int i = 0; i < 10; ++i) {
-        if (i == 9) {
-            return false;
-        }
-        if (distances[8][i] != INT_MAX) {
-            break;
-        }
-    }
-    return true;
-}
