@@ -25,6 +25,8 @@ Q_OBJECT
     std::vector<Fence*> highlightedFences;
     Fence* markedFence = nullptr;
 
+    std::vector<std::vector<int>> distances;
+
 public:
     explicit Controller(QObject *parent = nullptr);
 
@@ -45,6 +47,9 @@ private:
     void setFence(Fence &, Fence &);
     void deleteMoves(Fence &);
     void changePlayer();
+    void bfs(const Cell &);
+    bool pathsExist();
+
 
 signals:
 

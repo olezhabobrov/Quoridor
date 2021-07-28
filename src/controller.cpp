@@ -1,5 +1,6 @@
 #include "Controller.h"
 #include <iostream>
+#include <queue>
 
 Controller::Controller(QObject *parent) : QObject(parent), field(), board(field.setField())
 {
@@ -205,4 +206,44 @@ void Controller::deleteMoves(Fence &fence) {
 void Controller::changePlayer() {
     currentPlayer ^= 1;
     field.setPlayerMove(currentPlayer);
+}
+
+void Controller::bfs(const Cell &cell) {
+    distances.assign(9, std::vector<int>(9, INT_MAX));
+
+    std::queue<Cell> q;
+    q.push(cell);
+    distances[cell.y][cell.x] = 0;
+    while(!q.empty()) {
+        Cell c = q.front();
+        q.pop();
+        for (auto dir : c.directions) {
+            if (distances[c.y + dir.y][c.x + dir.x] != INT_MAX) {
+                distances[c.y + dir.y][c.x + dir.x] = distances[c.y][c.x] + 1;
+                q.push(board.cells[c.y + dir.y][c.x + dir.x]);
+            }
+        }
+    }
+}
+
+bool Controller::pathsExist() {
+    bfs(*players[0].currentPosition);
+    for (int i = 0; i < 10; ++i) {
+        if (i == 9) {
+            return false;
+        }
+        if (distances[0][i] != INT_MAX) {
+            break;
+        }
+    }
+    bfs(*players[1].currentPosition);
+    for (int i = 0; i < 10; ++i) {
+        if (i == 9) {
+            return false;
+        }
+        if (distances[8][i] != INT_MAX) {
+            break;
+        }
+    }
+    return true;
 }

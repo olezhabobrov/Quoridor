@@ -133,8 +133,4 @@ Board GameField::setField() {
 }
 
 
-void GameField::placeFence()
-{
-
-}
 

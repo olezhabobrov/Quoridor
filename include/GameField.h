@@ -30,8 +30,4 @@ public:
 private:
     void setConnections();
 
-signals:
-
-private slots:
-    void placeFence();
 };
