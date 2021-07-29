@@ -20,3 +20,11 @@ void TitleScreen::on_Button2Players_clicked()
     this->show();
 }
 
+
+void TitleScreen::on_Button1Player_clicked()
+{
+    this->hide();
+    Controller controller(nullptr, true);
+    this->show();
+}
+

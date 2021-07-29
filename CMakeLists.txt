@@ -24,6 +24,7 @@ add_executable(Quoridor
         include/Controller.h
         include/PathFinder.h
         include/VictoryScreen.h
+        include/Bot.h
         src/main.cpp
         src/TitleScreen.cpp
         src/TitleScreen.ui
@@ -33,6 +34,7 @@ add_executable(Quoridor
         src/PathFinder.cpp
         src/VictoryScreen.ui
         src/VictoryScreen.cpp
+        src/Bot.cpp
 )
 
 target_link_libraries(Quoridor Qt5::Widgets)

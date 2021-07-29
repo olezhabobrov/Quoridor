@@ -1,10 +1,11 @@
 #include "Controller.h"
 #include "PathFinder.h"
 #include "VictoryScreen.h"
+#include "Bot.h"
 #include <iostream>
 #include <queue>
 
-Controller::Controller(QObject *parent) : QObject(parent), field(), board(field.setField())
+Controller::Controller(QObject *parent, bool bot) : QObject(parent), field(), board(field.setField()), botConnected(bot)
 {
     setConnections();
     setGame();
@@ -42,16 +43,16 @@ void Controller::setConnections() {
 
 void Controller::cellClicked(Cell &cell) {
     if (cell.available) {
-        players[currentPlayer].currentPosition->button->setText("");
+        board.players[board.currentPlayer].currentPosition->button->setText("");
         clearMove();
-        players[currentPlayer].currentPosition = &cell;
-        cell.setPlayerMark(currentPlayer);
+        board.players[board.currentPlayer].currentPosition = &cell;
+        cell.setPlayerMark(board.currentPlayer);
         nextMove();
     }
 }
 
 void Controller::fenceClicked(Fence &fence) {
-    if (players[currentPlayer].fenceCount > 0){
+    if (board.players[board.currentPlayer].fenceCount > 0){
         // if we place second fence
         if (markedFence) {
             if (&fence == markedFence) {
@@ -106,14 +107,26 @@ void Controller::markFence(Fence &fence) {
 }
 
 void Controller::nextMove() {
+    if (board.players[0].currentPosition->y == 0 || board.players[1].currentPosition->y == 8) {
+        VictoryScreen victory(&field, (board.players[0].currentPosition->y == 0 ? false : true));
+        victory.exec();
+        field.close();
+        return;
+    }
     changePlayer();
-    prepareMove();
+//  TODO: check if bot connected
+    if (board.currentPlayer && botConnected) {
+        Bot::play(board);
+        nextMove();
+    } else {
+        prepareMove();
+    }
 }
 
 void Controller::setGame() {
-    players.clear();
-    players.emplace_back(0, &board.cells[8][4]);
-    players.emplace_back(1, &board.cells[0][4]);
+    board.players.clear();
+    board.players.emplace_back(0, &board.cells[8][4]);
+    board.players.emplace_back(1, &board.cells[0][4]);
     field.setGame();
     prepareMove();
 }
@@ -131,15 +144,11 @@ void printCell(Cell &cell) {
 }
 
 void Controller::prepareMove() {
-    if (players[0].currentPosition->y == 0 || players[1].currentPosition->y == 8) {
-        VictoryScreen victory(&field, (players[0].currentPosition->y == 0 ? false : true));
-        victory.exec();
-        field.close();
-    }
-    Cell *cell = players[currentPlayer].currentPosition;
+
+    Cell *cell = board.players[board.currentPlayer].currentPosition;
     for (auto dir : cell->directions) {
         Cell &cellTemp = board.cells[cell->y + dir.y][cell->x + dir.x];
-        if (sameCells(*players[currentPlayer ^ 1].currentPosition, cellTemp)){
+        if (sameCells(*board.players[board.currentPlayer ^ 1].currentPosition, cellTemp)){
             if (cellTemp.findDirection(dir) != -1) {
                 setAvailable(board.cells[cellTemp.y + dir.y][cellTemp.x + dir.x]);
             } else {
@@ -175,7 +184,7 @@ void Controller::setAvailable(Fence &fence) {
 }
 
 void Controller::unmarkCells() {
-    Cell *cell = players[currentPlayer].currentPosition;
+    Cell *cell = board.players[board.currentPlayer].currentPosition;
     for (Cell *cell : highlightedCells) {
         cell->setUnavailable();
     }
@@ -201,7 +210,7 @@ void Controller::setFence(Fence &first, Fence &second) {
     second.setMarked();
     deleteMoves(second, board.cells);
     board.betweenDots[(first.y + second.y) / 2][(first.x + second.x) / 2].setMarked();
-    field.updateFenceCounter(currentPlayer, --players[currentPlayer].fenceCount);
+    field.updateFenceCounter(board.currentPlayer, --board.players[board.currentPlayer].fenceCount);
 }
 
 void Controller::deleteMoves(const Fence &fence, vector<vector<Cell>> &cells) {
@@ -217,14 +226,14 @@ void Controller::deleteMoves(const Fence &fence, vector<vector<Cell>> &cells) {
 }
 
 void Controller::changePlayer() {
-    currentPlayer ^= 1;
-    field.setPlayerMove(currentPlayer);
+    board.currentPlayer ^= 1;
+    field.setPlayerMove(board.currentPlayer);
 }
 
 bool Controller::checkFence(const Fence& first, const Fence &second) {
     PathFinder pFinder(board.cells);
     deleteMoves(first, pFinder.getField());
     deleteMoves(second, pFinder.getField());
-    return pFinder.pathsExist(*players[0].currentPosition, *players[1].currentPosition);
+    return pFinder.pathsExist(*board.players[0].currentPosition, *board.players[1].currentPosition);
 }
 

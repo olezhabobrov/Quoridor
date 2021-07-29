@@ -23,4 +23,5 @@ public:
 
 private slots:
     void on_Button2Players_clicked();
+    void on_Button1Player_clicked();
 };

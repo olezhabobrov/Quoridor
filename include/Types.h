@@ -108,7 +108,17 @@ struct Fence {
     Fence() = default;
 };
 
+struct Player {
+    bool id = 0;
+    int fenceCount = 10;
+    Cell *currentPosition;
+
+    Player(bool id, Cell *c) : id(id), currentPosition(c) {};
+};
+
 struct Board {
+    bool currentPlayer = 0;
+    vector<Player> players;
     vector<vector<Cell>> cells;
     vector<vector<Fence>> verticalFences;
     vector<vector<Fence>> horizontalFences;
