@@ -47,3 +47,18 @@ bool PathFinder::pathsExist(const Cell &first, const Cell &second) {
 vector<vector<Cell>>& PathFinder::getField() {
     return cells;
 }
+
+int PathFinder::distanceToWin(const Cell &cell, bool player) {
+    bfs(cell);
+    int distance = INT_MAX;
+    if (player) {
+        for (int i = 0; i < 9; ++i) {
+            distance = std::min(distance, distances[8][i]);
+        }
+    } else {
+        for (int i = 0; i < 9; ++i) {
+            distance = std::min(distance, distances[0][i]);
+        }
+    }
+    return distance;
+};

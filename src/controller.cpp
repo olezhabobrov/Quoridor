@@ -5,13 +5,26 @@
 #include <iostream>
 #include <queue>
 
-Controller::Controller(QObject *parent, bool bot) : QObject(parent), field(), board(field.setField()), botConnected(bot)
+Controller::Controller(QObject *parent, bool bot) : QObject(parent), field(), board(field.setField()),
+                                                    botConnected(bot)
 {
     setConnections();
     setGame();
 
     field.exec();
+}
 
+Board& Controller::getBoard() {
+    return board;
+}
+
+Cell& Controller::getCurrentPosition(bool player) {
+    return *board.players[player].currentPosition;
+}
+
+void Controller::makeMove(Direction dir, bool player) {
+    board.players[player].currentPosition =
+            &board.cells[board.players[player].currentPosition->y + dir.y][board.players[player].currentPosition->x + dir.x];
 }
 
 void Controller::setConnections() {
@@ -116,7 +129,8 @@ void Controller::nextMove() {
     changePlayer();
 //  TODO: check if bot connected
     if (board.currentPlayer && botConnected) {
-        Bot::play(board);
+        Bot bot(this);
+//        bot.play();
         nextMove();
     } else {
         prepareMove();
@@ -184,7 +198,6 @@ void Controller::setAvailable(Fence &fence) {
 }
 
 void Controller::unmarkCells() {
-    Cell *cell = board.players[board.currentPlayer].currentPosition;
     for (Cell *cell : highlightedCells) {
         cell->setUnavailable();
     }
@@ -231,6 +244,9 @@ void Controller::changePlayer() {
 }
 
 bool Controller::checkFence(const Fence& first, const Fence &second) {
+    if (first.marked || second.marked) {
+        return false;
+    }
     PathFinder pFinder(board.cells);
     deleteMoves(first, pFinder.getField());
     deleteMoves(second, pFinder.getField());

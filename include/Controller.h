@@ -17,8 +17,14 @@ Q_OBJECT
     bool botConnected = false;
 
 public:
-    explicit Controller(QObject *parent = nullptr, bool = false);
-
+    explicit Controller(QObject * = nullptr, bool = false);
+    void nextMove();
+    bool checkFence(const Fence &, const Fence &);
+    Board& getBoard();
+    Cell& getCurrentPosition(bool);
+    void makeMove(Direction, bool);
+    void deleteMoves(const Fence &, vector<vector<Cell>>&);
+    void restoreMoves(const Fence &, vector<vector<Cell>>&);
 
 private:
     void setConnections();
@@ -27,16 +33,13 @@ private:
     void fenceClicked(Fence &);
     void prepareMove();
     void clearMove();
-    void nextMove();
     void setAvailable(Cell &);
     void setAvailable(Fence &);
     void markFence(Fence &);
     void unmarkFences();
     void unmarkCells();
     void setFence(Fence &, Fence &);
-    void deleteMoves(const Fence &, vector<vector<Cell>>&);
     void changePlayer();
-    bool checkFence(const Fence &, const Fence &);
 
 
 signals:

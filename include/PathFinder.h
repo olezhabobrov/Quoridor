@@ -13,6 +13,7 @@ class PathFinder {
 public:
     vector<vector<Cell>>& getField();
     bool pathsExist(const Cell&, const Cell&);
+    int distanceToWin(const Cell &, bool);
     PathFinder(const vector<vector<Cell>> &);
 
 
