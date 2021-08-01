@@ -25,7 +25,10 @@ public:
     void makeMove(Direction, bool);
     void deleteMoves(const Fence &, vector<vector<Cell>>&);
     void restoreMoves(const Fence &, vector<vector<Cell>>&);
-
+    void setFence(Fence &, Fence &, bool = true);
+    void removeFence(Fence &, Fence &);    
+    void placeCell(Cell &);
+    
 private:
     void setConnections();
     void setGame();
@@ -38,9 +41,8 @@ private:
     void markFence(Fence &);
     void unmarkFences();
     void unmarkCells();
-    void setFence(Fence &, Fence &);
     void changePlayer();
-
+    void addMoves(const Fence &, vector<vector<Cell>>&);
 
 signals:
 

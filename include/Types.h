@@ -97,10 +97,12 @@ struct Fence {
     bool available = false;
     bool marked = false;
 
-    void setMarked() {
+    void setMarked(bool show) {
         marked = true;
-        button->setVisible(true);
-        button->setStyleSheet("background-color: blue");
+        if (show){
+            button->setVisible(true);
+            button->setStyleSheet("background-color: blue");
+        }
     }
 
     Fence(QPushButton *b, Orientation o, int x, int y) : button(b), orient(o), x(x), y(y){};

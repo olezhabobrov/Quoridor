@@ -64,6 +64,11 @@ void Controller::cellClicked(Cell &cell) {
     }
 }
 
+void Controller::placeCell(Cell &cell) {
+    cell.available = true;
+    cellClicked(cell);
+}
+
 void Controller::fenceClicked(Fence &fence) {
     if (board.players[board.currentPlayer].fenceCount > 0){
         // if we place second fence
@@ -216,14 +221,24 @@ void Controller::unmarkFences() {
     highlightedFences.clear();
 }
 
-void Controller::setFence(Fence &first, Fence &second) {
+void Controller::setFence(Fence &first, Fence &second, bool show) {
 
-    first.setMarked();
+    first.setMarked(show);
     deleteMoves(first, board.cells);
-    second.setMarked();
+    second.setMarked(show);
     deleteMoves(second, board.cells);
-    board.betweenDots[(first.y + second.y) / 2][(first.x + second.x) / 2].setMarked();
-    field.updateFenceCounter(board.currentPlayer, --board.players[board.currentPlayer].fenceCount);
+    board.betweenDots[(first.y + second.y) / 2][(first.x + second.x) / 2].setMarked(show);
+    if (show){
+        field.updateFenceCounter(board.currentPlayer, --board.players[board.currentPlayer].fenceCount);
+    }
+}
+
+void Controller::removeFence(Fence &first, Fence &second) {
+    first.marked = false;
+    addMoves(first, board.cells);
+    second.marked = false;
+    addMoves(second, board.cells);
+    board.betweenDots[(first.y + second.y) / 2][(first.x + second.x) / 2].marked = false;
 }
 
 void Controller::deleteMoves(const Fence &fence, vector<vector<Cell>> &cells) {
@@ -236,6 +251,17 @@ void Controller::deleteMoves(const Fence &fence, vector<vector<Cell>> &cells) {
         cells[fence.y][fence.x + 1].deleteDirection(Direction(-1, 0));
     }
 
+}
+
+void Controller::addMoves(const Fence &fence, vector<vector<Cell>> &cells) {
+    if (fence.orient == Orientation::HORIZONTAL) {
+        cells[fence.y][fence.x].directions.push_back(Direction(0, 1));
+        cells[fence.y + 1][fence.x].directions.push_back(Direction(0, -1));
+    }
+    if (fence.orient == Orientation::VERTICAL) {
+        cells[fence.y][fence.x].directions.push_back(Direction(1, 0));
+        cells[fence.y][fence.x + 1].directions.push_back(Direction(-1, 0));
+    }
 }
 
 void Controller::changePlayer() {
