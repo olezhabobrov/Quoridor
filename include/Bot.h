@@ -22,8 +22,9 @@ struct Move {
 class Controller;
 class Bot {
     Controller *controller = nullptr;
-    const int maxDepth = 3;
+    const int maxDepth = 4;
     const int distanceCoef = 1;
+    const int fenceCoef = 1;
 
     Move playerMove;
 

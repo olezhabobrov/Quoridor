@@ -17,8 +17,22 @@ Bot::Bot(Controller *controller) : controller(controller), playerMove() {};
 
 int Bot::evaluationOfPosition() const {
     PathFinder pFinder(controller->getBoard().cells);
-    return (pFinder.distanceToWin(*controller->getBoard().players[0].currentPosition, false)
-           - pFinder.distanceToWin(*controller->getBoard().players[1].currentPosition, true)) * distanceCoef;
+    int dumbPlayer = pFinder.distanceToWin(*controller->getBoard().players[0].currentPosition, false);
+    int botPlayer = pFinder.distanceToWin(*controller->getBoard().players[1].currentPosition, true);
+    if (botPlayer == 0) {
+        return +INT_MAX / 2;
+    }
+    if (dumbPlayer == 0) {
+        return -INT_MAX / 2;
+    }
+    int result = (dumbPlayer - botPlayer) * distanceCoef + (controller->getBoard().players[1].fenceCount -
+            controller->getBoard().players[0].fenceCount) * fenceCoef;
+//    printf("player=%d   x=%d    y=%d\n", 1, controller->getBoard().players[1].currentPosition->x,
+//            controller->getBoard().players[1].currentPosition->y);
+//    printf("player=%d   x=%d    y=%d\n", 0, controller->getBoard().players[0].currentPosition->x,
+//            controller->getBoard().players[0].currentPosition->y);
+//    printf("result=%d\n", result);
+    return result;
 }
 
 int Bot::minmax(int depth, bool player) {
@@ -26,12 +40,17 @@ int Bot::minmax(int depth, bool player) {
         return evaluationOfPosition();
     }
     int result = (player ? -INT_MAX : +INT_MAX);
+    printf("===========================\n");
+    printf("player=%d\n", (int)player);
     // check moves
     for (auto dir : controller->getCurrentPosition(player).directions) {
         controller->makeMove(dir, player);
         int move = minmax(depth + 1, player ^ 1);
+        printf("result=%d\n", move);
         if (move < result && !player || move > result && player) {
-            playerMove = Move(MoveType::PAWN, dir);
+            if (depth == 0){
+                playerMove = Move(MoveType::PAWN, dir);
+            }
             result = move;
         }
         // restoring move
@@ -52,7 +71,7 @@ int Bot::minmax(int depth, bool player) {
     checkFence(Orientation::VERTICAL, y, x - 1, y + 1, x - 1, result, depth, player);
     checkFence(Orientation::VERTICAL, y - 1, x, y, x, result, depth, player);
     checkFence(Orientation::VERTICAL, y, x, y + 1, x, result, depth, player);
-
+    printf("===========================\n");
     return result;
 
 }
@@ -85,7 +104,9 @@ void Bot::checkFence(Orientation orient,int y1, int x1, int y2, int x2, int & re
                 controller->setFence(first, second, false);
                 int move = minmax(depth + 1, player ^ 1);
                 if (move < result && !player || move > result && player) {
-                    playerMove = Move(MoveType::FENCE, &first, &second);
+                    if (depth == 0){
+                        playerMove = Move(MoveType::FENCE, &first, &second);
+                    }
                     result = move;
                 }
                 // remove fences
@@ -104,8 +125,11 @@ void Bot::checkFence(Orientation orient,int y1, int x1, int y2, int x2, int & re
             if (controller->getBoard().players[player].fenceCount-- > 0){
                 controller->setFence(first, second, false);
                 int move = minmax(depth + 1, player ^ 1);
+                printf("result=%d\n", move);
                 if (move < result && !player || move > result && player) {
-                    playerMove = Move(MoveType::FENCE, &first, &second);
+                    if (depth == 0){
+                        playerMove = Move(MoveType::FENCE, &first, &second);
+                    }
                     result = move;
                 }
                 // remove fences

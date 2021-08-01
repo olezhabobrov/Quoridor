@@ -82,9 +82,9 @@ void Controller::fenceClicked(Fence &fence) {
                 Fence &initialFence = *markedFence;
                 unmarkFences();
                 setFence(initialFence, fence);
-                changePlayer();
+
                 clearMove();
-                prepareMove();
+                nextMove();
             }
         }
         // if we place first fence
@@ -135,8 +135,7 @@ void Controller::nextMove() {
 //  TODO: check if bot connected
     if (board.currentPlayer && botConnected) {
         Bot bot(this);
-//        bot.play();
-        nextMove();
+        bot.play();
     } else {
         prepareMove();
     }
