@@ -47,3 +47,5 @@ private:
 signals:
 
 };
+
+bool sameCells(const Cell&, const Cell&);

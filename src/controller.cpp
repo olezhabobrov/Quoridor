@@ -24,7 +24,8 @@ Cell& Controller::getCurrentPosition(bool player) {
 
 void Controller::makeMove(Direction dir, bool player) {
     board.players[player].currentPosition =
-            &board.cells[board.players[player].currentPosition->y + dir.y][board.players[player].currentPosition->x + dir.x];
+            &board.cells[board.players[player]
+            .currentPosition->y + dir.y][board.players[player].currentPosition->x + dir.x];
 }
 
 void Controller::setConnections() {
@@ -65,7 +66,7 @@ void Controller::cellClicked(Cell &cell) {
 }
 
 void Controller::placeCell(Cell &cell) {
-    cell.available = true;
+    setAvailable(cell);
     cellClicked(cell);
 }
 
@@ -149,10 +150,8 @@ void Controller::setGame() {
     prepareMove();
 }
 
-namespace {
 bool sameCells(const Cell &first, const Cell &second) {
     return first.x == second.x && first.y == second.y;
-}
 }
 
 namespace {
