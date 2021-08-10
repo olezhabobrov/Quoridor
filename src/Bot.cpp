@@ -77,34 +77,22 @@ int Bot::minmax(int depth, bool player) {
 
     }
 
-    // check fences
-    int y = controller->getCurrentPosition(player ^ 1).y;
-    int x = controller->getCurrentPosition(player ^ 1).x;
-    // horizontal
-    checkFence(Orientation::HORIZONTAL, y - 1, x, y - 1, x + 1, result, depth, player);
-    checkFence(Orientation::HORIZONTAL, y - 1, x - 1, y - 1, x, result, depth, player);
-    checkFence(Orientation::HORIZONTAL, y, x, y, x + 1, result, depth, player);
-    checkFence(Orientation::HORIZONTAL, y, x - 1, y, x, result, depth, player);
+    if (player){
+        // check fences
+        int y = controller->getCurrentPosition(player ^ 1).y;
+        int x = controller->getCurrentPosition(player ^ 1).x;
+        // horizontal
+        checkFence(Orientation::HORIZONTAL, y - 1, x, y - 1, x + 1, result, depth, player);
+        checkFence(Orientation::HORIZONTAL, y - 1, x - 1, y - 1, x, result, depth, player);
+        checkFence(Orientation::HORIZONTAL, y, x, y, x + 1, result, depth, player);
+        checkFence(Orientation::HORIZONTAL, y, x - 1, y, x, result, depth, player);
 
-    // vertical
-    checkFence(Orientation::VERTICAL, y - 1, x - 1, y, x - 1, result, depth, player);
-    checkFence(Orientation::VERTICAL, y, x - 1, y + 1, x - 1, result, depth, player);
-    checkFence(Orientation::VERTICAL, y - 1, x, y, x, result, depth, player);
-    checkFence(Orientation::VERTICAL, y, x, y + 1, x, result, depth, player);
-
-    y = controller->getCurrentPosition(player).y;
-    x = controller->getCurrentPosition(player).x;
-    // horizontal
-    checkFence(Orientation::HORIZONTAL, y - 1, x, y - 1, x + 1, result, depth, player);
-    checkFence(Orientation::HORIZONTAL, y - 1, x - 1, y - 1, x, result, depth, player);
-    checkFence(Orientation::HORIZONTAL, y, x, y, x + 1, result, depth, player);
-    checkFence(Orientation::HORIZONTAL, y, x - 1, y, x, result, depth, player);
-
-    // vertical
-    checkFence(Orientation::VERTICAL, y - 1, x - 1, y, x - 1, result, depth, player);
-    checkFence(Orientation::VERTICAL, y, x - 1, y + 1, x - 1, result, depth, player);
-    checkFence(Orientation::VERTICAL, y - 1, x, y, x, result, depth, player);
-    checkFence(Orientation::VERTICAL, y, x, y + 1, x, result, depth, player);
+        // vertical
+        checkFence(Orientation::VERTICAL, y - 1, x - 1, y, x - 1, result, depth, player);
+        checkFence(Orientation::VERTICAL, y, x - 1, y + 1, x - 1, result, depth, player);
+        checkFence(Orientation::VERTICAL, y - 1, x, y, x, result, depth, player);
+        checkFence(Orientation::VERTICAL, y, x, y + 1, x, result, depth, player);
+    }
 
     return result;
 

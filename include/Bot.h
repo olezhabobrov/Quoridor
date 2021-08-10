@@ -22,7 +22,7 @@ struct Move {
 class Controller;
 class Bot {
     Controller *controller = nullptr;
-    const int maxDepth = 3;
+    const int maxDepth = 5;
     const int distanceCoef = 10;
     const int fenceCoef = 8;
     const int manhattanDistCoef = 1;
