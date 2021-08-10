@@ -24,7 +24,10 @@ int Bot::evaluationOfPosition(int dumbPlayer, int botPlayer) const {
         return -INT_MAX / 3;
     }
     int result = (dumbPlayer - botPlayer) * distanceCoef + (controller->getBoard().players[1].fenceCount -
-            controller->getBoard().players[0].fenceCount) * fenceCoef;
+            controller->getBoard().players[0].fenceCount) * fenceCoef
+    +
+            (controller->getBoard().players[0].currentPosition->y - 9 +
+            controller->getBoard().players[1].currentPosition->y) * manhattanDistCoef;
     return result;
 }
 
@@ -34,7 +37,7 @@ int Bot::minmax(int depth, bool player) {
     int dumbPlayer = pFinder.distanceToWin(*controller->getBoard().players[0].currentPosition, false);
     int botPlayer = pFinder.distanceToWin(*controller->getBoard().players[1].currentPosition, true);
     if (dumbPlayer == INT_MAX || botPlayer == INT_MAX) {
-        throw std::runtime_error("");
+        throw std::runtime_error("NO WAY FOR A PLAYER");
     }
 
     if (depth == maxDepth) {
@@ -64,7 +67,7 @@ int Bot::minmax(int depth, bool player) {
             } else {
                 for (auto dirT : cellTemp.directions) {
                     if (!sameCells(controller->getBoard().cells[cellTemp.y + dirT.y][cellTemp.x + dirT.x], *cell)) {
-                        launchNext(Direction(dirT.x + dir.x, dirT.y + dir.x));
+                        launchNext(Direction(dirT.x + dir.x, dirT.y + dir.y));
                     }
                 }
             }
@@ -88,6 +91,21 @@ int Bot::minmax(int depth, bool player) {
     checkFence(Orientation::VERTICAL, y, x - 1, y + 1, x - 1, result, depth, player);
     checkFence(Orientation::VERTICAL, y - 1, x, y, x, result, depth, player);
     checkFence(Orientation::VERTICAL, y, x, y + 1, x, result, depth, player);
+
+    y = controller->getCurrentPosition(player).y;
+    x = controller->getCurrentPosition(player).x;
+    // horizontal
+    checkFence(Orientation::HORIZONTAL, y - 1, x, y - 1, x + 1, result, depth, player);
+    checkFence(Orientation::HORIZONTAL, y - 1, x - 1, y - 1, x, result, depth, player);
+    checkFence(Orientation::HORIZONTAL, y, x, y, x + 1, result, depth, player);
+    checkFence(Orientation::HORIZONTAL, y, x - 1, y, x, result, depth, player);
+
+    // vertical
+    checkFence(Orientation::VERTICAL, y - 1, x - 1, y, x - 1, result, depth, player);
+    checkFence(Orientation::VERTICAL, y, x - 1, y + 1, x - 1, result, depth, player);
+    checkFence(Orientation::VERTICAL, y - 1, x, y, x, result, depth, player);
+    checkFence(Orientation::VERTICAL, y, x, y + 1, x, result, depth, player);
+
     return result;
 
 }

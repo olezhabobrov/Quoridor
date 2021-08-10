@@ -4,6 +4,7 @@
 #include "Bot.h"
 #include <iostream>
 #include <queue>
+#include <exception>
 
 Controller::Controller(QObject *parent, bool bot) : QObject(parent), field(), board(field.setField()),
                                                     botConnected(bot)
@@ -23,9 +24,15 @@ Cell& Controller::getCurrentPosition(bool player) {
 }
 
 void Controller::makeMove(Direction dir, bool player) {
+    int new_y = board.players[player]
+            .currentPosition->y + dir.y;
+    int new_x = board.players[player]
+            .currentPosition->x + dir.x;
+    if (new_x < 0 || new_x > 8 || new_y < 0 || new_x > 8) {
+        throw std::runtime_error("OUT OF BOUNDS");
+    }
     board.players[player].currentPosition =
-            &board.cells[board.players[player]
-            .currentPosition->y + dir.y][board.players[player].currentPosition->x + dir.x];
+            &board.cells[new_y][new_x];
 }
 
 void Controller::setConnections() {
