@@ -31,7 +31,7 @@ int Bot::evaluationOfPosition(int dumbPlayer, int botPlayer) const {
     return result;
 }
 
-int Bot::minmax(int depth, bool player) {
+int Bot::minmax(int depth, bool player, int alpha, int beta) {
     // check if field state is valid
     PathFinder pFinder(controller->getBoard().cells);
     int dumbPlayer = pFinder.distanceToWin(*controller->getBoard().players[0].currentPosition, false);
@@ -47,7 +47,7 @@ int Bot::minmax(int depth, bool player) {
     // check moves
     auto launchNext = [&](Direction dir){
         controller->makeMove(dir, player);
-        int move = minmax(depth + 1, player ^ 1);
+        int move = minmax(depth + 1, player ^ 1, alpha, beta);
         if (move < result && !player || move > result && player) {
             if (depth == 0){
                 playerMove = Move(MoveType::PAWN, dir);
@@ -56,6 +56,19 @@ int Bot::minmax(int depth, bool player) {
         }
         // restoring move
         controller->makeMove(Direction(-dir.x, -dir.y), player);
+    };
+
+    // alpha beta pruning
+    auto pruning = [&]() {
+        if (player) {
+            alpha = std::max(alpha, result);
+        } else {
+            beta = std::min(beta, result);
+        }
+        if (beta <= alpha) {
+            return true;
+        }
+        return false;
     };
 
     for (auto dir : controller->getCurrentPosition(player).directions) {
@@ -75,24 +88,53 @@ int Bot::minmax(int depth, bool player) {
             launchNext(dir);
         }
 
+        if (pruning()) {
+            return result;
+        }
     }
 
-    if (player){
+//    if (player){
         // check fences
         int y = controller->getCurrentPosition(player ^ 1).y;
         int x = controller->getCurrentPosition(player ^ 1).x;
         // horizontal
-        checkFence(Orientation::HORIZONTAL, y - 1, x, y - 1, x + 1, result, depth, player);
-        checkFence(Orientation::HORIZONTAL, y - 1, x - 1, y - 1, x, result, depth, player);
-        checkFence(Orientation::HORIZONTAL, y, x, y, x + 1, result, depth, player);
-        checkFence(Orientation::HORIZONTAL, y, x - 1, y, x, result, depth, player);
-
+        for (int yd = 0; yd <= 1; ++yd) {
+            for (int xd = 0; xd <= 1; ++xd) {
+                checkFence(Orientation::HORIZONTAL, y - yd, x - 1 + xd, y - yd, x + xd, result, depth, player, alpha, beta);
+                if (pruning()) {
+                    return result;
+                }
+            }
+        }
         // vertical
-        checkFence(Orientation::VERTICAL, y - 1, x - 1, y, x - 1, result, depth, player);
-        checkFence(Orientation::VERTICAL, y, x - 1, y + 1, x - 1, result, depth, player);
-        checkFence(Orientation::VERTICAL, y - 1, x, y, x, result, depth, player);
-        checkFence(Orientation::VERTICAL, y, x, y + 1, x, result, depth, player);
-    }
+        for (int xd = 0; xd <= 1; ++xd) {
+            for (int yd = 0; yd <= 1; ++yd) {
+                checkFence(Orientation::VERTICAL, y - 1 + yd, x - xd, y + yd, x - xd, result, depth, player, alpha, beta);
+                if (pruning()) {
+                    return result;
+                }
+            }
+        }
+        y = controller->getCurrentPosition(player).y;
+        x = controller->getCurrentPosition(player).x;
+        for (int yd = 0; yd <= 1; ++yd) {
+            for (int xd = 0; xd <= 1; ++xd) {
+                checkFence(Orientation::HORIZONTAL, y - yd, x - 1 + xd, y - yd, x + xd, result, depth, player, alpha, beta);
+                if (pruning()) {
+                    return result;
+                }
+            }
+        }
+        // vertical
+        for (int xd = 0; xd <= 1; ++xd) {
+            for (int yd = 0; yd <= 1; ++yd) {
+                checkFence(Orientation::VERTICAL, y - 1 + yd, x - xd, y + yd, x - xd, result, depth, player, alpha, beta);
+                if (pruning()) {
+                    return result;
+                }
+            }
+        }
+//    }
 
     return result;
 
@@ -114,7 +156,7 @@ void Bot::play() {
     }
 }
 
-void Bot::checkFence(Orientation orient,int y1, int x1, int y2, int x2, int & result, int depth, bool player) {
+void Bot::checkFence(Orientation orient,int y1, int x1, int y2, int x2, int & result, int depth, bool player, int alpha, int beta) {
     if (orient == Orientation::HORIZONTAL) {
         if (y1 < 0 || y1 > 7 || x1 < 0 || x2 > 8) {
             return;
@@ -126,7 +168,7 @@ void Bot::checkFence(Orientation orient,int y1, int x1, int y2, int x2, int & re
             if (controller->getBoard().players[player].fenceCount-- > 0){
                 controller->setFence(first, second, false);
                 try {
-                    int move = minmax(depth + 1, player ^ 1);
+                    int move = minmax(depth + 1, player ^ 1, alpha, beta);
                     if (move < result && !player || move > result && player) {
                         if (depth == 0){
                             playerMove = Move(MoveType::FENCE, &first, &second);
@@ -151,7 +193,7 @@ void Bot::checkFence(Orientation orient,int y1, int x1, int y2, int x2, int & re
             if (controller->getBoard().players[player].fenceCount-- > 0){
                 controller->setFence(first, second, false);
                 try{
-                    int move = minmax(depth + 1, player ^ 1);
+                    int move = minmax(depth + 1, player ^ 1,alpha, beta);
                     if (move < result && !player || move > result && player) {
                         if (depth == 0){
                             playerMove = Move(MoveType::FENCE, &first, &second);

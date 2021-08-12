@@ -22,7 +22,7 @@ struct Move {
 class Controller;
 class Bot {
     Controller *controller = nullptr;
-    const int maxDepth = 5;
+    const int maxDepth = 4;
     const int distanceCoef = 10;
     const int fenceCoef = 8;
     const int manhattanDistCoef = 1;
@@ -35,8 +35,8 @@ public:
 
 private:    
 
-    int minmax(int = 0, bool = true);
+    int minmax(int = 0, bool = true, int = -INT_MAX, int = INT_MAX);
     int evaluationOfPosition(int, int) const;
-    void checkFence(Orientation, int, int, int, int, int&, int, bool);
+    void checkFence(Orientation, int, int, int, int, int&, int, bool, int, int);
     
 };
