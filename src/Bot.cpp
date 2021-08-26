@@ -24,8 +24,8 @@ int Bot::evaluationOfPosition(int dumbPlayer, int botPlayer) const {
         return -INT_MAX / 3;
     }
     int result = (dumbPlayer - botPlayer) * distanceCoef +
-//            (controller->getBoard().players[1].fenceCount + 1 -
-//            controller->getBoard().players[0].fenceCount) * fenceCoef +
+            (controller->getBoard().players[1].fenceCount + 1 -
+            controller->getBoard().players[0].fenceCount) * fenceCoef +
             (controller->getBoard().players[0].currentPosition->y - 9 +
             controller->getBoard().players[1].currentPosition->y) * manhattanDistCoef;
     return result;
@@ -40,11 +40,22 @@ int Bot::minmax(int depth, bool player, int alpha, int beta) {
         throw std::runtime_error("NO WAY FOR A PLAYER");
     }
 
+    // if one player won
+    if (dumbPlayer == 0) {
+        return -INT_MAX;
+    }
+    if (botPlayer == 0) {
+        return INT_MAX;
+    }
+
+    // if the end of recursion
     if (depth == maxDepth) {
         return evaluationOfPosition(dumbPlayer, botPlayer);
     }
+
     int result = (player ? -INT_MAX / 2 : +INT_MAX / 2);
-    // check moves
+
+    // make move
     auto launchNext = [&](Direction dir){
         controller->makeMove(dir, player);
         int move = minmax(depth + 1, player ^ 1, alpha, beta);
@@ -57,6 +68,26 @@ int Bot::minmax(int depth, bool player, int alpha, int beta) {
         // restoring move
         controller->makeMove(Direction(-dir.x, -dir.y), player);
         return move;
+    };
+
+    int move = 0;
+
+    auto checkAndMakeMove = [&](Direction dir) {
+        Cell *cell = controller->getBoard().players[player].currentPosition;
+        Cell &cellTemp = controller->getBoard().cells[cell->y + dir.y][cell->x + dir.x];
+        if (sameCells(*controller->getBoard().players[player ^ 1].currentPosition, cellTemp)){
+            if (cellTemp.findDirection(dir) != -1) {
+                move = launchNext(Direction(2 * dir.x, 2 * dir.y));
+            } else {
+                for (auto dirT : cellTemp.directions) {
+                    if (!sameCells(controller->getBoard().cells[cellTemp.y + dirT.y][cellTemp.x + dirT.x], *cell)) {
+                        move = launchNext(Direction(dirT.x + dir.x, dirT.y + dir.y));
+                    }
+                }
+            }
+        } else{
+            move = launchNext(dir);
+        }
     };
 
     // alpha beta pruning
@@ -75,24 +106,18 @@ int Bot::minmax(int depth, bool player, int alpha, int beta) {
         return false;
     };
 
-    int move = 0;
+    // if zero fences available
+    if (controller->getBoard().players[player].fenceCount == 0) {
+        Direction dir = pFinder.nextMoveDirection(*controller->getBoard().players[player].currentPosition, player);
+        checkAndMakeMove(dir);
+        if (depth == 0){
+            playerMove = Move(MoveType::PAWN, dir);
+        }
+        return result;
+    }
 
     for (auto dir : controller->getCurrentPosition(player).directions) {
-        Cell *cell = controller->getBoard().players[player].currentPosition;
-        Cell &cellTemp = controller->getBoard().cells[cell->y + dir.y][cell->x + dir.x];
-        if (sameCells(*controller->getBoard().players[player ^ 1].currentPosition, cellTemp)){
-            if (cellTemp.findDirection(dir) != -1) {
-                move = launchNext(Direction(2 * dir.x, 2 * dir.y));
-            } else {
-                for (auto dirT : cellTemp.directions) {
-                    if (!sameCells(controller->getBoard().cells[cellTemp.y + dirT.y][cellTemp.x + dirT.x], *cell)) {
-                        move = launchNext(Direction(dirT.x + dir.x, dirT.y + dir.y));
-                    }
-                }
-            }
-        } else{
-            move = launchNext(dir);
-        }
+        checkAndMakeMove(dir);
 
         if (pruning()) {
             return result;
