@@ -29,6 +29,5 @@ public:
 
 private:
     void setConnections();
-    void setStyle();
 
 };

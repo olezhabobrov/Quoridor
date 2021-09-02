@@ -109,6 +109,9 @@
      <height>61</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">font: bold 75 14pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
    <property name="text">
     <string>Back to menu</string>
    </property>

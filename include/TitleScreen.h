@@ -17,11 +17,13 @@ class TitleScreen final : public QMainWindow
 
     Ui::TitleScreen *ui;
 
+    void setConnections();
+
 public:
     TitleScreen(QWidget *parent = nullptr);
     ~TitleScreen();
 
 private slots:
-    void on_Button2Players_clicked();
-    void on_Button1Player_clicked();
+    void start_2players_game();
+    void start_1player_game();
 };
