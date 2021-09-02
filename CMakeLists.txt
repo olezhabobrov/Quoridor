@@ -15,24 +15,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 include_directories(include)
-#include_directories(Forms)
 
 add_executable(Quoridor
-        include/Types.h
         include/TitleScreen.h
         include/GameField.h
         include/Controller.h
-        include/PathFinder.h
         include/VictoryScreen.h
-        include/Bot.h
         src/main.cpp
         src/TitleScreen.cpp
-        src/TitleScreen.ui
         src/GameField.cpp
-        src/GameField.ui
         src/Controller.cpp
         src/PathFinder.cpp
-        src/VictoryScreen.ui
         src/VictoryScreen.cpp
         src/Bot.cpp
 )
