@@ -2,7 +2,7 @@
 
 #include <QDialog>
 #include <vector>
-#include "Types.h"
+#include "OtherTypes.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

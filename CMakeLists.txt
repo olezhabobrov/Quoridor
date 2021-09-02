@@ -28,6 +28,7 @@ add_executable(Quoridor
         src/PathFinder.cpp
         src/VictoryScreen.cpp
         src/Bot.cpp
+        src/OtherTypes.cpp
 )
 
 target_link_libraries(Quoridor Qt5::Widgets)

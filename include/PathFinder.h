@@ -1,5 +1,5 @@
 #pragma once
-#include "Types.h"
+#include "OtherTypes.h"
 #include <vector>
 
 using std::vector;

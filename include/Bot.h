@@ -1,5 +1,5 @@
 #pragma once
-#include "Types.h"
+#include "OtherTypes.h"
 #include "Controller.h"
 
 enum MoveType {

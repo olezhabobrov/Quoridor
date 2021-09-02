@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <vector>
-#include "Types.h"
+#include "OtherTypes.h"
 #include "GameField.h"
 
 class Controller : public QObject
