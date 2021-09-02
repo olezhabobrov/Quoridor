@@ -5,6 +5,7 @@
 GameField::GameField(QWidget *parent) : QDialog(parent), ui(new Ui::GameField)
 {
     ui->setupUi(this);
+    setStyle();
     setConnections();
 }
 
@@ -12,8 +13,12 @@ GameField::~GameField() {
     delete ui;
 }
 
+void GameField::setStyle() {
+    ui->menu->setStyleSheet("font-size: 20px;"
+                            "font-weight: bold;");
+}
+
 void GameField::setConnections() {
-//    connect(ui->reset, &QPushButton::clicked, [=] { emit newGame(); });
     connect(ui->menu, &QPushButton::clicked, [=] { close(); });
 }
 
