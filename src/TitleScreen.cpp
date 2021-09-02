@@ -1,13 +1,12 @@
 #include "TitleScreen.h"
-#include "ui_TitleScreen.h"
 #include "Controller.h"
-#include <QUrl>
+#include "ui_TitleScreen.h"
 #include <QDesktopServices>
+#include <QUrl>
 
 
 TitleScreen::TitleScreen(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::TitleScreen)
-{
+    : QMainWindow(parent), ui(new Ui::TitleScreen) {
     ui->setupUi(this);
     setConnections();
 }
@@ -26,18 +25,15 @@ void TitleScreen::setConnections() {
     connect(ui->quit, &QPushButton::clicked, [=] { close(); });
 }
 
-void TitleScreen::start_2players_game()
-{
+void TitleScreen::start_2players_game() {
     this->hide();
     Controller controller;
     this->show();
 }
 
 
-void TitleScreen::start_1player_game()
-{
+void TitleScreen::start_1player_game() {
     this->hide();
     Controller controller(nullptr, true);
     this->show();
 }
-

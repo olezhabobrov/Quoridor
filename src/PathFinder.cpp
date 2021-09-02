@@ -2,7 +2,7 @@
 #include "Controller.h"
 #include <queue>
 
-PathFinder::PathFinder(const vector<vector<Cell>> &cells) : cells(cells) {};
+PathFinder::PathFinder(const vector<vector<Cell>> &cells) : cells(cells){};
 
 void PathFinder::bfs(const Cell &cell) {
     distances.assign(9, std::vector<int>(9, INT_MAX));
@@ -12,7 +12,7 @@ void PathFinder::bfs(const Cell &cell) {
     q.push(cell);
     distances[cell.y][cell.x] = 0;
     previousCells[cell.y][cell.x] = cells[cell.y][cell.x];
-    while(!q.empty()) {
+    while (!q.empty()) {
         Cell c = q.front();
         q.pop();
         for (auto dir : c.directions) {
@@ -47,7 +47,7 @@ bool PathFinder::pathsExist(const Cell &first, const Cell &second) {
     return true;
 }
 
-vector<vector<Cell>>& PathFinder::getField() {
+vector<vector<Cell>> &PathFinder::getField() {
     return cells;
 }
 

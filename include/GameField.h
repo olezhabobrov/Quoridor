@@ -1,18 +1,17 @@
 #pragma once
 
+#include "OtherTypes.h"
 #include <QDialog>
 #include <vector>
-#include "OtherTypes.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class GameField;
+    class GameField;
 }
 QT_END_NAMESPACE
 
 
-class GameField : public QDialog
-{
+class GameField : public QDialog {
     Q_OBJECT
 
     Ui::GameField *ui;
@@ -29,5 +28,4 @@ public:
 
 private:
     void setConnections();
-
 };

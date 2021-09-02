@@ -1,10 +1,10 @@
 #pragma once
 
 #include <QPushButton>
-#include <vector>
 #include <algorithm>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 using std::vector;
 
@@ -64,7 +64,7 @@ struct Player {
     int fenceCount = 10;
     Cell *currentPosition;
 
-    Player(bool id, Cell *c) : id(id), currentPosition(c) {};
+    Player(bool id, Cell *c) : id(id), currentPosition(c){};
 };
 
 struct Board {

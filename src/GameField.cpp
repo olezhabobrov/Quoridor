@@ -1,9 +1,8 @@
-#include <cassert>
 #include "GameField.h"
 #include "ui_GameField.h"
+#include <cassert>
 
-GameField::GameField(QWidget *parent) : QDialog(parent), ui(new Ui::GameField)
-{
+GameField::GameField(QWidget *parent) : QDialog(parent), ui(new Ui::GameField) {
     ui->setupUi(this);
     setConnections();
 }
@@ -17,27 +16,27 @@ void GameField::setConnections() {
 }
 
 void GameField::setPlayerMove(bool player) {
-    if (!player){
+    if (!player) {
         ui->PlayerOBox->setStyleSheet(QStringLiteral("QGroupBox{"
-                                                 "font-size: 16px;"
-                                                 "font-weight: bold;"
-                                                 "border:5px solid lightgreen;"
-                                                 "border-radius:5px;"
-                                                 "margin-top: 1ex;}"
-                                                 "QGroupBox::title{"
-                                                 "subcontrol-origin: margin;"
-                                                 "subcontrol-position:top center;"
-                                                 "padding:0 3px;}"));
+                                                     "font-size: 16px;"
+                                                     "font-weight: bold;"
+                                                     "border:5px solid lightgreen;"
+                                                     "border-radius:5px;"
+                                                     "margin-top: 1ex;}"
+                                                     "QGroupBox::title{"
+                                                     "subcontrol-origin: margin;"
+                                                     "subcontrol-position:top center;"
+                                                     "padding:0 3px;}"));
         ui->PlayerXBox->setStyleSheet(QStringLiteral("QGroupBox{"
-                                                 "font-size: 16px;"
-                                                 "font-weight: bold;"
-                                                 "border:5px solid lightgray;"
-                                                 "border-radius:5px;"
-                                                 "margin-top: 1ex;}"
-                                                 "QGroupBox::title{"
-                                                 "subcontrol-origin: margin;"
-                                                 "subcontrol-position:top center;"
-                                                 "padding:0 3px;}"));
+                                                     "font-size: 16px;"
+                                                     "font-weight: bold;"
+                                                     "border:5px solid lightgray;"
+                                                     "border-radius:5px;"
+                                                     "margin-top: 1ex;}"
+                                                     "QGroupBox::title{"
+                                                     "subcontrol-origin: margin;"
+                                                     "subcontrol-position:top center;"
+                                                     "padding:0 3px;}"));
     } else {
         ui->PlayerXBox->setStyleSheet(QStringLiteral("QGroupBox{"
                                                      "font-size: 16px;"
@@ -68,7 +67,6 @@ void GameField::setGame() {
     ui->fenceLabelX->setStyleSheet("font-size: 20px; font-weight: bold");
     ui->fenceCounterO->display(10);
     ui->fenceCounterX->display(10);
-
 }
 
 void GameField::updateFenceCounter(bool player, int counter) {
@@ -130,6 +128,3 @@ Board GameField::setField() {
     board.cells[8][4].setPlayerMark(false);
     return board;
 }
-
-
-

@@ -4,7 +4,7 @@
 
 VictoryScreen::VictoryScreen(QWidget *parent, bool winner) : QDialog(parent), ui(new Ui::VictoryScreen) {
     ui->setupUi(this);
-    connect(ui->pushButton, &QPushButton::clicked, [=]() {close(); });
+    connect(ui->pushButton, &QPushButton::clicked, [=]() { close(); });
     if (winner) {
         ui->label->setText("Player X won!");
     } else {

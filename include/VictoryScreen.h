@@ -9,12 +9,11 @@ QT_END_NAMESPACE
 
 struct VictoryScreen : public QDialog {
 
-Q_OBJECT
+    Q_OBJECT
 
     Ui::VictoryScreen *ui;
 
 public:
     VictoryScreen(QWidget *, bool);
     ~VictoryScreen();
-
 };

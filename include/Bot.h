@@ -1,6 +1,6 @@
 #pragma once
-#include "OtherTypes.h"
 #include "Controller.h"
+#include "OtherTypes.h"
 
 enum MoveType {
     NOMOVE,
@@ -31,12 +31,10 @@ class Bot {
 
 public:
     void play();
-    Bot(Controller*);
+    Bot(Controller *);
 
-private:    
-
+private:
     int minmax(int = 0, bool = true, int = -INT_MAX, int = INT_MAX);
     int evaluationOfPosition(int, int) const;
-    int checkFence(Orientation, int, int, int, int, int&, int, bool, int, int);
-    
+    int checkFence(Orientation, int, int, int, int, int &, int, bool, int, int);
 };

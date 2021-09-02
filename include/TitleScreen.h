@@ -6,13 +6,12 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class TitleScreen;
+    class TitleScreen;
 }
 QT_END_NAMESPACE
 
 
-class TitleScreen final : public QMainWindow
-{
+class TitleScreen final : public QMainWindow {
     Q_OBJECT
 
     Ui::TitleScreen *ui;

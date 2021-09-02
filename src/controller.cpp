@@ -1,33 +1,34 @@
 #include "Controller.h"
+#include "Bot.h"
 #include "PathFinder.h"
 #include "VictoryScreen.h"
-#include "Bot.h"
+#include <exception>
 #include <iostream>
 #include <queue>
-#include <exception>
 
 Controller::Controller(QObject *parent, bool bot) : QObject(parent), field(), board(field.setField()),
-                                                    botConnected(bot)
-{
+                                                    botConnected(bot) {
     setConnections();
     setGame();
 
     field.exec();
 }
 
-Board& Controller::getBoard() {
+Board &Controller::getBoard() {
     return board;
 }
 
-Cell& Controller::getCurrentPosition(bool player) {
+Cell &Controller::getCurrentPosition(bool player) {
     return *board.players[player].currentPosition;
 }
 
 void Controller::makeMove(Direction dir, bool player) {
     int new_y = board.players[player]
-            .currentPosition->y + dir.y;
+                        .currentPosition->y +
+                dir.y;
     int new_x = board.players[player]
-            .currentPosition->x + dir.x;
+                        .currentPosition->x +
+                dir.x;
     if (new_x < 0 || new_x > 8 || new_y < 0 || new_x > 8) {
         throw std::runtime_error("OUT OF BOUNDS");
     }
@@ -36,26 +37,26 @@ void Controller::makeMove(Direction dir, bool player) {
 }
 
 void Controller::setConnections() {
-// set button connections
-    for (auto& cellRow: board.cells) {
-        for (auto& cell : cellRow){
-            connect(cell.button, &QPushButton::clicked, [&](){
+    // set button connections
+    for (auto &cellRow : board.cells) {
+        for (auto &cell : cellRow) {
+            connect(cell.button, &QPushButton::clicked, [&]() {
                 cellClicked(cell);
             });
         }
     }
 
-// set fence connections
-    for (auto& fenceRow : board.horizontalFences) {
-        for (auto& fence : fenceRow) {
-            connect(fence.button, &QPushButton::clicked, [&](){
+    // set fence connections
+    for (auto &fenceRow : board.horizontalFences) {
+        for (auto &fence : fenceRow) {
+            connect(fence.button, &QPushButton::clicked, [&]() {
                 fenceClicked(fence);
             });
         }
     }
-    for (auto& fenceRow : board.verticalFences) {
-        for (auto& fence : fenceRow) {
-            connect(fence.button, &QPushButton::clicked, [&](){
+    for (auto &fenceRow : board.verticalFences) {
+        for (auto &fence : fenceRow) {
+            connect(fence.button, &QPushButton::clicked, [&]() {
                 fenceClicked(fence);
             });
         }
@@ -78,7 +79,7 @@ void Controller::placeCell(Cell &cell) {
 }
 
 void Controller::fenceClicked(Fence &fence) {
-    if (board.players[board.currentPlayer].fenceCount > 0){
+    if (board.players[board.currentPlayer].fenceCount > 0) {
         // if we place second fence
         if (markedFence) {
             if (&fence == markedFence) {
@@ -102,7 +103,6 @@ void Controller::fenceClicked(Fence &fence) {
             }
         }
     }
-
 }
 
 void Controller::markFence(Fence &fence) {
@@ -110,23 +110,23 @@ void Controller::markFence(Fence &fence) {
     fence.button->setStyleSheet("background-color: green");
     if (fence.orient == Orientation::HORIZONTAL) {
         if (fence.x > 0 && !board.betweenDots[fence.y][fence.x - 1].marked &&
-                checkFence(fence, board.horizontalFences[fence.y][fence.x - 1])) {
+            checkFence(fence, board.horizontalFences[fence.y][fence.x - 1])) {
             setAvailable(board.horizontalFences[fence.y][fence.x - 1]);
         }
         if (fence.x < board.horizontalFences[fence.y].size() - 1 &&
-                !board.betweenDots[fence.y][fence.x].marked &&
-                checkFence(fence, board.horizontalFences[fence.y][fence.x + 1])) {
+            !board.betweenDots[fence.y][fence.x].marked &&
+            checkFence(fence, board.horizontalFences[fence.y][fence.x + 1])) {
             setAvailable(board.horizontalFences[fence.y][fence.x + 1]);
         }
     }
     if (fence.orient == Orientation::VERTICAL) {
         if (fence.y > 0 && !board.betweenDots[fence.y - 1][fence.x].marked &&
-                checkFence(fence, board.verticalFences[fence.y - 1][fence.x])) {
+            checkFence(fence, board.verticalFences[fence.y - 1][fence.x])) {
             setAvailable(board.verticalFences[fence.y - 1][fence.x]);
         }
         if (fence.y < board.verticalFences.size() - 1 &&
-                !board.betweenDots[fence.y][fence.x].marked &&
-                checkFence(board.verticalFences[fence.y + 1][fence.x], fence)) {
+            !board.betweenDots[fence.y][fence.x].marked &&
+            checkFence(board.verticalFences[fence.y + 1][fence.x], fence)) {
             setAvailable(board.verticalFences[fence.y + 1][fence.x]);
         }
     }
@@ -140,7 +140,7 @@ void Controller::nextMove() {
         return;
     }
     changePlayer();
-//  TODO: check if bot connected
+    //  TODO: check if bot connected
     if (board.currentPlayer && botConnected) {
         Bot bot(this);
         bot.play();
@@ -162,17 +162,17 @@ bool sameCells(const Cell &first, const Cell &second) {
 }
 
 namespace {
-void printCell(Cell &cell) {
-    printf("x=%d  y=%d\n", cell.x, cell.y);
-}
-}
+    void printCell(Cell &cell) {
+        printf("x=%d  y=%d\n", cell.x, cell.y);
+    }
+}// namespace
 
 void Controller::prepareMove() {
 
     Cell *cell = board.players[board.currentPlayer].currentPosition;
     for (auto dir : cell->directions) {
         Cell &cellTemp = board.cells[cell->y + dir.y][cell->x + dir.x];
-        if (sameCells(*board.players[board.currentPlayer ^ 1].currentPosition, cellTemp)){
+        if (sameCells(*board.players[board.currentPlayer ^ 1].currentPosition, cellTemp)) {
             if (cellTemp.findDirection(dir) != -1) {
                 setAvailable(board.cells[cellTemp.y + dir.y][cellTemp.x + dir.x]);
             } else {
@@ -182,7 +182,7 @@ void Controller::prepareMove() {
                     }
                 }
             }
-        } else{
+        } else {
             setAvailable(cellTemp);
         }
     }
@@ -219,7 +219,7 @@ void Controller::unmarkFences() {
         markedFence->button->setStyleSheet("background-color: lightgrey");
         markedFence = nullptr;
     }
-    for (auto& fence : highlightedFences) {
+    for (auto &fence : highlightedFences) {
         fence->button->setStyleSheet("background-color: lightgrey");
         fence->available = false;
     }
@@ -233,7 +233,7 @@ void Controller::setFence(Fence &first, Fence &second, bool show) {
     second.setMarked(show);
     deleteMoves(second, board.cells);
     board.betweenDots[(first.y + second.y) / 2][(first.x + second.x) / 2].setMarked(show);
-    if (show){
+    if (show) {
         field.updateFenceCounter(board.currentPlayer, --board.players[board.currentPlayer].fenceCount);
     }
 }
@@ -255,7 +255,6 @@ void Controller::deleteMoves(const Fence &fence, vector<vector<Cell>> &cells) {
         cells[fence.y][fence.x].deleteDirection(Direction(1, 0));
         cells[fence.y][fence.x + 1].deleteDirection(Direction(-1, 0));
     }
-
 }
 
 void Controller::addMoves(const Fence &fence, vector<vector<Cell>> &cells) {
@@ -274,7 +273,7 @@ void Controller::changePlayer() {
     field.setPlayerMove(board.currentPlayer);
 }
 
-bool Controller::checkFence(const Fence& first, const Fence &second) {
+bool Controller::checkFence(const Fence &first, const Fence &second) {
     if (first.marked || second.marked) {
         return false;
     }
@@ -283,4 +282,3 @@ bool Controller::checkFence(const Fence& first, const Fence &second) {
     deleteMoves(second, pFinder.getField());
     return pFinder.pathsExist(*board.players[0].currentPosition, *board.players[1].currentPosition);
 }
-

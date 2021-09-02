@@ -1,6 +1,6 @@
 #include "OtherTypes.h"
 
-Cell::Cell(QPushButton *b, int x, int y) : button(b), x(x), y(y){
+Cell::Cell(QPushButton *b, int x, int y) : button(b), x(x), y(y) {
     if (x == 0) {
         deleteDirection(Direction(-1, 0));
     }
@@ -58,7 +58,7 @@ void Cell::setPlayerMark(bool player) {
 
 void Fence::setMarked(bool show) {
     marked = true;
-    if (show){
+    if (show) {
         button->setVisible(true);
         button->setStyleSheet("background-color: blue");
     }
@@ -66,7 +66,7 @@ void Fence::setMarked(bool show) {
 
 Fence::Fence(QPushButton *b, Orientation o, int x, int y) : button(b), orient(o), x(x), y(y){};
 
-Board::Board() : cells(9, vector<Cell> (9)),
-          verticalFences(9, vector<Fence>(8)),
-          horizontalFences(8, vector<Fence> (9)),
-          betweenDots(8, vector<Fence> (8)){};
+Board::Board() : cells(9, vector<Cell>(9)),
+                 verticalFences(9, vector<Fence>(8)),
+                 horizontalFences(8, vector<Fence>(9)),
+                 betweenDots(8, vector<Fence>(8)){};
